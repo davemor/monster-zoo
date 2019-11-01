@@ -37,7 +37,7 @@ function* range(start, end) {
 }
 
 function makeMonsters(startId, count) {
-    return range(startId, startId + count)
+    return [...range(startId, startId + count)]
            .map(id => new Monster(id));
 }
 
