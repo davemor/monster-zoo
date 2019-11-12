@@ -33,6 +33,8 @@ In the browser, install the react-devtools.  This add a very useful components v
 This project uses data from https://www.kaggle.com/vishalsubbiah/pokemon-images-and-types
 
 ```javascript
+const csvParse = require('csv-parse');
+
 // read in all the pokemon data
 const filename = 'pokemon.csv';
 fs.readFile(filename, 'utf8', (err, data) => {

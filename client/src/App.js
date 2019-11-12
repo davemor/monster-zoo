@@ -1,21 +1,99 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
-function App() {
-  let cards = [1,2,3,4,5,6,7,8,9,10].map(i =>{
-   return( <div key={i.toString()} class='card'>
-      <p>{i.toString()}</p>
-    </div>);
+function LoadingText() {
+  return <div>Loading ...</div>;
+}
+
+class MonsterCard extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {monster: null};
+    this.fetchData = this.fetchData.bind(this);
+    this.feed = this.feed.bind(this);
+  }
+
+  componentDidMount() {
+    let intervalId = setInterval(this.fetchData, 1000);
+    this.setState({intervalId: intervalId});
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.state.intervalId);
+  }
+
+  fetchData() {
+    fetch(`/monsters/{this.props.monsterId}`)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({
+          monster: data
+        });
+      });
+  }
+
+  feed() {
+    console.log('feed me');
+  }
+
+  render() {
+    if (this.state.monster === null) {
+      return <LoadingText/>
+    } else {
+      return (
+        <div className='card'>
+          <div>{this.state.monster.id}</div>
+          <div>{this.state.monster.name}</div>
+          <div>{this.state.monster.hunger}</div>
+          <button onClick={this.feed}>Feed</button>
+        </div>
+      );
+    }
+  }
+}
+
+function MonstersGrid(props) {
+  let cards = props.monsters.map(monster => {
+    return <MonsterCard key={monster.id.toString()} monsterId={monster.id}/>
   });
-  return (
-    <div className="App">
-      <header>
-        <h1>Monster Zoo!</h1>
-      </header>
-      {cards}
-    </div>
-  );
+  return <div>{cards}</div>;
+}
+
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      monster: []
+    };
+  }
+
+  componentDidMount() {
+    this.fetchMonsters();
+  }
+
+  fetchMonsters() {
+    fetch('/monsters')
+      .then(res => res.json())
+      .then(data => {
+        this.setState({
+          monsters: data
+        });
+      });
+  }
+
+  render() {
+    const content = this.state.monsters.length === 0 ?
+                      <LoadingText/> :
+                      <MonstersGrid monsters={this.state.monsters}/>;
+    return (
+      <div className="App">
+        <header>
+          <h1>Monster Zoo!</h1>
+        </header>
+        {content}s
+      </div>
+    );
+  }
 }
 
 export default App;

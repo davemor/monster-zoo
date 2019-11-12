@@ -1,21 +1,20 @@
 const fs = require('fs')
 const express = require('express');
 const bodyParser = require('body-parser');
-const csvParse = require('csv-parse')
 const app = express();
 const port = process.env.PORT || 5000;
-const pokemon = require('./pokemnon.json');
+const pokemon = require('./pokemon.json');
 
 // add express middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
 class Monster {
     constructor(id) {
         this.id = id;
-        this.name = Monster.makeName();
+        this.kind = Monster.getKind();
         this.hunger = 0;
+        this.imagePath = `./public/images/${this.kind.name}.png`;
     }
     update() {
         ++ this.hunger;
@@ -23,19 +22,14 @@ class Monster {
     feed() {
         this.hunger = 0;
     }
-    static makeName() {
-        const starts = ['Idoap', 'Col', 'Mor', 'Jol'];
-        const middles = ['il', 'om', 'per', 'tek'];
-        const ends = ['osaurus', 'urid', 'odon', 'bit'];
-        const sample = (xs) => {
-            return xs[Math.floor(Math.random() * xs.length)];
-        }
-        return sample(starts) + sample(middles) + sample(ends);
+    static getKind() {
+        const index = Math.floor(Math.random() * pokemon.length);
+        return pokemon[index];;
     }
 }
 
 function* range(start, end) {
-    for (let i = start; i <= end; i++) {
+    for (let i = start; i < end; i++) {
         yield i;
     }
 }
@@ -46,9 +40,14 @@ function makeMonsters(startId, count) {
 }
 
 // setup the global data model
+const numInitalMonsters = 3;
 let nextMonsterId = 0;
-let monsters = makeMonsters(nextMonsterId, 3);
+let monsters = makeMonsters(nextMonsterId, numInitalMonsters);
 let availableFood = 100;
+
+// print out the monsters
+console.log(`Generated ${numInitalMonsters} monsters`);
+console.log(monsters);
 
 app.get('/monsters', (req, res) => {
     res.json(monsters); 
@@ -79,7 +78,7 @@ app.post('/food/:monsterId', (req, res) => {
     }
 });
 
-setInterval(function() {
+setInterval(() => {
     console.log('Updating ...')
     // update the monsters
     for (let monster of monsters) {
