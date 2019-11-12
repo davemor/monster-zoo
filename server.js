@@ -1,16 +1,15 @@
+const fs = require('fs')
 const express = require('express');
+const bodyParser = require('body-parser');
+const csvParse = require('csv-parse')
 const app = express();
 const port = process.env.PORT || 5000;
+const pokemon = require('./pokemnon.json');
 
 // add express middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
-// data model
-let nextMonsterId = 0;
-let monsters = makeMonsters(nextMonsterId, 3);
-let availableFood = 100;
 
 class Monster {
     constructor(id) {
@@ -45,6 +44,11 @@ function makeMonsters(startId, count) {
     return [...range(startId, startId + count)]
            .map(id => new Monster(id));
 }
+
+// setup the global data model
+let nextMonsterId = 0;
+let monsters = makeMonsters(nextMonsterId, 3);
+let availableFood = 100;
 
 app.get('/monsters', (req, res) => {
     res.json(monsters); 
@@ -83,4 +87,5 @@ setInterval(function() {
     }
 }, 5000);
 
-app.listen(port, () => console.log(`Monster Zoo running on port: ${port}!`));
+app.listen(port, () => 
+    console.log(`Monster Zoo server running on port: ${port}!`));
