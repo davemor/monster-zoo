@@ -23,7 +23,7 @@ class MonsterCard extends React.Component {
   }
 
   fetchData() {
-    fetch(`/monsters/{this.props.monsterId}`)
+    fetch(`/monsters/${this.props.monsterId}`)
       .then(res => res.json())
       .then(data => {
         this.setState({
@@ -38,12 +38,16 @@ class MonsterCard extends React.Component {
 
   render() {
     if (this.state.monster === null) {
-      return <LoadingText/>
+      return (
+        <div className='card'>
+          <LoadingText/>
+        </div>);
     } else {
       return (
         <div className='card'>
           <div>{this.state.monster.id}</div>
-          <div>{this.state.monster.name}</div>
+          <div>{this.state.monster.kind.name}</div>
+          <img src={this.state.monster.imagePath}/>
           <div>{this.state.monster.hunger}</div>
           <button onClick={this.feed}>Feed</button>
         </div>
@@ -63,7 +67,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      monster: []
+      monsters: []
     };
   }
 
@@ -90,7 +94,7 @@ class App extends React.Component {
         <header>
           <h1>Monster Zoo!</h1>
         </header>
-        {content}s
+        {content}
       </div>
     );
   }

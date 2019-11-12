@@ -1,4 +1,3 @@
-const fs = require('fs')
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
@@ -15,6 +14,7 @@ class Monster {
         this.kind = Monster.getKind();
         this.hunger = 0;
         this.imagePath = `./public/images/${this.kind.name}.png`;
+        // this.imagePath = "./public/logo192.png";
     }
     update() {
         ++ this.hunger;
@@ -24,7 +24,7 @@ class Monster {
     }
     static getKind() {
         const index = Math.floor(Math.random() * pokemon.length);
-        return pokemon[index];;
+        return pokemon[index];
     }
 }
 
@@ -40,7 +40,7 @@ function makeMonsters(startId, count) {
 }
 
 // setup the global data model
-const numInitalMonsters = 3;
+const numInitalMonsters = 8;
 let nextMonsterId = 0;
 let monsters = makeMonsters(nextMonsterId, numInitalMonsters);
 let availableFood = 100;
