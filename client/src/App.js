@@ -23,7 +23,7 @@ class MonsterCard extends React.Component {
   }
 
   fetchData() {
-    fetch(`/monsters/${this.props.monsterId}`)
+    fetch(`/api/monsters/${this.props.monsterId}`)
       .then(res => res.json())
       .then(data => {
         this.setState({
@@ -45,9 +45,9 @@ class MonsterCard extends React.Component {
     } else {
       return (
         <div className='card'>
-          <div>{this.state.monster.id}</div>
           <div>{this.state.monster.kind.name}</div>
-          <img src={this.state.monster.imagePath}/>
+          <img src={this.state.monster.imagePath} 
+               alt={this.state.monster.kind.name}/>
           <div>{this.state.monster.hunger}</div>
           <button onClick={this.feed}>Feed</button>
         </div>
@@ -76,7 +76,7 @@ class App extends React.Component {
   }
 
   fetchMonsters() {
-    fetch('/monsters')
+    fetch('/api/monsters')
       .then(res => res.json())
       .then(data => {
         this.setState({

@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const port = process.env.PORT || 5000;
-const pokemon = require('./pokemon.json');
+const pokemon = require('./public/pokemon.json');
 
 // add express middleware
 app.use(bodyParser.json());
@@ -13,8 +13,7 @@ class Monster {
         this.id = id;
         this.kind = Monster.getKind();
         this.hunger = 0;
-        this.imagePath = `./public/images/${this.kind.name}.png`;
-        // this.imagePath = "./public/logo192.png";
+        this.imagePath = `public/images/${this.kind.name}.png`;
     }
     update() {
         ++ this.hunger;
@@ -49,11 +48,11 @@ let availableFood = 100;
 console.log(`Generated ${numInitalMonsters} monsters`);
 console.log(monsters);
 
-app.get('/monsters', (req, res) => {
+app.get('/api/monsters', (req, res) => {
     res.json(monsters); 
 });
 
-app.get('/monsters/:id', (req, res) => {
+app.get('/api/monsters/:id', (req, res) => {
     let index = req.params['id'];
     if (index < monsters.length) {
         let monster = monsters[index];
@@ -63,11 +62,11 @@ app.get('/monsters/:id', (req, res) => {
     }
 });
 
-app.get('/food', (req, res) => {
+app.get('/api/food', (req, res) => {
     res.json({availableFood:availableFood});
 });
 
-app.post('/food/:monsterId', (req, res) => {
+app.post('/api/food/:monsterId', (req, res) => {
     let index = req.params['id'];
     if (index < monsters.length) {
         let monster = monsters[index];
@@ -85,6 +84,8 @@ setInterval(() => {
         monster.update();
     }
 }, 5000);
+
+app.use(express.static(__dirname + '/public'));
 
 app.listen(port, () => 
     console.log(`Monster Zoo server running on port: ${port}!`));

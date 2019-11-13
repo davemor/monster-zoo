@@ -62,3 +62,6 @@ fs.readFile(filename, 'utf8', (err, data) => {
     });
 });
 ```
+
+## Proxying API Requests in Development
+https://create-react-app.dev/docs/proxying-api-requests-in-development/
