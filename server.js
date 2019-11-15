@@ -13,7 +13,7 @@ class Monster {
         this.id = id;
         this.kind = Monster.getKind();
         this.hunger = 0;
-        this.imagePath = `public/images/${this.kind.name}.png`;
+        this.imagePath = `/images/${this.kind.name}.png`;
     }
     update() {
         ++ this.hunger;
