@@ -12,14 +12,17 @@ class Monster {
     constructor(id) {
         this.id = id;
         this.kind = Monster.getKind();
-        this.hunger = 0;
+        this.isHungry = false;
         this.imagePath = `/images/${this.kind.name}.png`;
     }
     update() {
-        ++ this.hunger;
+        if (!this.isHungry) {
+            // get hungry with a 25% chance
+            this.isHungry = Math.random() >= 0.75;
+        }
     }
     feed() {
-        this.hunger = 0;
+        this.isHungry = false;
     }
     static getKind() {
         const index = Math.floor(Math.random() * pokemon.length);
@@ -42,14 +45,20 @@ function makeMonsters(startId, count) {
 const numInitalMonsters = 8;
 let nextMonsterId = 0;
 let monsters = makeMonsters(nextMonsterId, numInitalMonsters);
-let availableFood = 100;
 
 // print out the monsters
 console.log(`Generated ${numInitalMonsters} monsters`);
 console.log(monsters);
 
+/*
+/api/monsters           - GET a list of all the current monster ids
+/api/monsters/:id       - GET a specific monster
+/api/monsters/:id/food  - POST some food to the monster 
+*/
+
 app.get('/api/monsters', (req, res) => {
-    res.json(monsters); 
+    let monsterIds = monsters.map(m => m.id);
+    res.json(monsterIds); 
 });
 
 app.get('/api/monsters/:id', (req, res) => {
@@ -62,11 +71,7 @@ app.get('/api/monsters/:id', (req, res) => {
     }
 });
 
-app.get('/api/food', (req, res) => {
-    res.json({availableFood:availableFood});
-});
-
-app.post('/api/food/:monsterId', (req, res) => {
+app.get('/api/monsters/:id/food', (req, res) => {
     let index = req.params['id'];
     if (index < monsters.length) {
         let monster = monsters[index];

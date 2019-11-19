@@ -28,4 +28,16 @@
   box-shadow: 0 2px 2px #ccc;
   width: 128px;
   height: 200px;
+  padding-top: 10px;
+}
+
+.hungry-card {
+  display: inline-block;
+  background-color: #fc5947;
+  margin: 10px;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 2px #ccc;
+  width: 128px;
+  height: 200px;
+  padding-top: 10px;
 }

@@ -1,6 +1,10 @@
 import React from 'react';
 import './App.css';
 
+function capitalise(text) {
+  return text.charAt(0).toUpperCase() + text.substring(1);
+}
+
 function LoadingText() {
   return <div>Loading ...</div>;
 }
@@ -33,10 +37,13 @@ class MonsterCard extends React.Component {
   }
 
   feed() {
-    console.log('feed me');
-    // change the state of the monster
-
-    // update the amount of food
+    fetch(`/api/monsters/${this.props.monsterId}/food`)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({
+         monster: data
+        });
+      });
   }
 
   render() {
@@ -46,12 +53,14 @@ class MonsterCard extends React.Component {
           <LoadingText/>
         </div>);
     } else {
+      let cardStyle = this.state.monster.isHungry ? 'hungry-card' : 'card';
+      let hungryText = this.state.monster.isHungry ? 'Hungry' : 'Not Hungry';
       return (
-        <div className='card'>
-          <div>{this.state.monster.kind.name}</div>
+        <div className={cardStyle}>
+          <div>{capitalise(this.state.monster.kind.name)}</div>
           <img src={this.state.monster.imagePath} 
                alt={this.state.monster.kind.name}/>
-          <div>{this.state.monster.hunger}</div>
+          <div>{hungryText}</div>
           <button onClick={this.feed}>Feed</button>
         </div>
       );
@@ -60,10 +69,9 @@ class MonsterCard extends React.Component {
 }
 
 function MonstersGrid(props) {
-  let cards = props.monsters.map(monster => {
-    return <MonsterCard key={monster.id.toString()} 
-                        monsterId={monster.id}
-                        totalFood={props.totalFood}/>
+  let cards = props.monsters.map(monsterId => {
+    return <MonsterCard key={monsterId.toString()} 
+                        monsterId={monsterId}/>
   });
   return <div>{cards}</div>;
 }
@@ -72,8 +80,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      monsters: [],
-      totalFood: 10
+      monsters: []
     };
   }
 
@@ -85,23 +92,9 @@ class App extends React.Component {
     fetch('/api/monsters')
       .then(res => res.json())
       .then(data => {
+        console.log(data);
         this.setState({
           monsters: data
-        });
-      });
-  }
-
-
-
-  decromentFood() {
-    let newFood = this.state.totalFood - 1;
-
-    // get the new food dz
-    fetch('/api/food')
-      .then(res => res.json())
-      .then(data => {
-        this.setState({
-          totalFood: data
         });
       });
   }
@@ -114,7 +107,6 @@ class App extends React.Component {
       <div className="App">
         <header>
           <h1>Monster Zoo!</h1>
-          <div>Total Food: {this.state.totalFood}</div>
         </header>
         {content}
       </div>
