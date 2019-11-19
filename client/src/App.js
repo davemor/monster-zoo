@@ -34,6 +34,9 @@ class MonsterCard extends React.Component {
 
   feed() {
     console.log('feed me');
+    // change the state of the monster
+
+    // update the amount of food
   }
 
   render() {
@@ -58,7 +61,9 @@ class MonsterCard extends React.Component {
 
 function MonstersGrid(props) {
   let cards = props.monsters.map(monster => {
-    return <MonsterCard key={monster.id.toString()} monsterId={monster.id}/>
+    return <MonsterCard key={monster.id.toString()} 
+                        monsterId={monster.id}
+                        totalFood={props.totalFood}/>
   });
   return <div>{cards}</div>;
 }
@@ -67,7 +72,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      monsters: []
+      monsters: [],
+      totalFood: 10
     };
   }
 
@@ -85,6 +91,21 @@ class App extends React.Component {
       });
   }
 
+
+
+  decromentFood() {
+    let newFood = this.state.totalFood - 1;
+
+    // get the new food dz
+    fetch('/api/food')
+      .then(res => res.json())
+      .then(data => {
+        this.setState({
+          totalFood: data
+        });
+      });
+  }
+
   render() {
     const content = this.state.monsters.length === 0 ?
                       <LoadingText/> :
@@ -93,6 +114,7 @@ class App extends React.Component {
       <div className="App">
         <header>
           <h1>Monster Zoo!</h1>
+          <div>Total Food: {this.state.totalFood}</div>
         </header>
         {content}
       </div>
